@@ -3,17 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Login extends StatefulWidget {
+class Register extends StatefulWidget {
   double height;
   @override
   State<StatefulWidget> createState() =>
-      LoginState();
+      RegisterState();
 }
-class LoginState extends State<Login> {
+class RegisterState extends State<Register> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final FirebaseAuth auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordController2 = TextEditingController();
   bool _success;
   String _userEmail;
   String _errorMsg;
@@ -46,7 +47,7 @@ class LoginState extends State<Login> {
                     children: <Widget>[
                       Center(
                         child: Container(
-                          child: Text('Login', style: TextStyle(fontSize: 26)),
+                          child: Text('Register', style: TextStyle(fontSize: 26)),
                         ),
                       ),
                       Center(
@@ -64,7 +65,8 @@ class LoginState extends State<Login> {
                           )
                       ),
                       Column(
-                        children: form(_emailController, _passwordController),
+                        children: form(_emailController, _passwordController,
+                            _passwordController2),
                       ),
                       Container(
                         alignment: Alignment.center,
@@ -72,10 +74,10 @@ class LoginState extends State<Login> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 80),
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
-                              _login();
+                              _register();
                             }
                           },
-                          child: const Text('Sign in'),
+                          child: const Text('Sign up'),
                         ),
                       ),
                       Container(
@@ -84,15 +86,14 @@ class LoginState extends State<Login> {
                             ? ''
                             : (_success
                             ? 'Successfully registered ' + _userEmail
-                            : _errorMsg), style: TextStyle(color: Colors.red),
-                        textAlign: TextAlign.center,),
+                            : _errorMsg), style: TextStyle(color: Colors.red),),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text('You have already an account ?'),
                           GestureDetector(
-                            child: Text(' Sign up', style: TextStyle(color: Theme.of(context).primaryColor),),
+                            child: Text(' Sign in', style: TextStyle(color: Theme.of(context).primaryColor),),
                             onTap: () {},
                           )
                         ],
@@ -106,9 +107,9 @@ class LoginState extends State<Login> {
     );
   }
 
-  void _login() async {
+  void _register() async {
     try {
-      User user = (await auth.signInWithEmailAndPassword(
+      User user = (await auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text,)
       ).user;
@@ -128,7 +129,8 @@ class LoginState extends State<Login> {
   }
 
 
-  List <Widget> form(TextEditingController email, TextEditingController pass) {
+  List <Widget> form(TextEditingController email, TextEditingController pass,
+      TextEditingController confirm) {
     return [
       TextFormField(
         controller: email,
@@ -162,8 +164,41 @@ class LoginState extends State<Login> {
           ),
         ),
         validator: (String value) {
-          if (value.isEmpty) {
+          if (value != confirm.text) {
+          return 'Passwords are not the same';
+          }
+          else if (value.isEmpty) {
             return 'Please enter some text';
+          }
+          else if (value.length < 6) {
+            return 'Password to weak';
+          }
+          return null;
+        },
+        obscureText: true,
+        keyboardType: TextInputType.visiblePassword,
+      ),
+      SizedBox(height: widget.height * 0.03),
+      TextFormField(
+        controller: confirm,
+        decoration: new InputDecoration(
+          labelText: "Confirm password",
+          fillColor: Colors.white,
+          border: new OutlineInputBorder(
+            borderRadius: new BorderRadius.circular(25.0),
+            borderSide: new BorderSide(
+            ),
+          ),
+        ),
+        validator: (String value) {
+          if (value != pass.text) {
+          return 'Passwords are not the same';
+          }
+          else if (value.isEmpty) {
+            return 'Please enter some text';
+          }
+          else if (value.length < 6) {
+            return 'Password to weak';
           }
           return null;
         },

@@ -1,8 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'Pages/HomePage.dart';
 import 'Pages/Login.dart';
+import 'Pages/Register.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -11,13 +15,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Wave',
       theme: ThemeData(
         // Define the default brightness and colors.
         brightness: Brightness.dark,
-        primaryColor: Colors.purple,
-        accentColor: Colors.cyan[600],
-        backgroundColor: Colors.purple,
+        primaryColor: Color(0xFF7E6FEA),
+        accentColor: Color(0xFFFFFFFF),
+        scaffoldBackgroundColor: Color(0xFF2A3442),
+        buttonTheme: ButtonThemeData(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
+          buttonColor: Color(0xFF7E6FEA),
+        ),
         // Define the default font family.
 /*
         fontFamily: 'Georgia',
@@ -26,8 +34,8 @@ class MyApp extends StatelessWidget {
         // Define the default TextTheme. Use this to specify the default
         // text styling for headlines, titles, bodies of text, and more.
         textTheme: TextTheme(
-          headline1: TextStyle(fontSize:/* MediaQuery.of(context).size.width * 0.07*/ 15, fontWeight: FontWeight.bold, color: Colors.white),
-          bodyText1: TextStyle(fontSize:/* MediaQuery.of(context).size.width * 0.05*/ 12, color: Colors.white),
+          headline1: TextStyle(fontSize: 15, color: Colors.white),
+          bodyText1: TextStyle(fontSize: 12, color: Colors.white),
         ),
       ),
       home: Login(),
