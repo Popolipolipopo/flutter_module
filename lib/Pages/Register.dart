@@ -74,7 +74,10 @@ class RegisterState extends State<Register> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 80),
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
-                              _register();
+                              _register().then((result) {
+                                if (result == true)
+                                  Navigator.pushReplacementNamed(context, '/home');
+                              });
                             }
                           },
                           child: const Text('Sign up'),
@@ -85,8 +88,8 @@ class RegisterState extends State<Register> {
                         child: Text(_success == null
                             ? ''
                             : (_success
-                            ? 'Successfully registered ' + _userEmail
-                            : _errorMsg), style: TextStyle(color: Colors.red),),
+                            ? ''
+                            : _errorMsg), style: TextStyle(color: Colors.red)),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -94,7 +97,7 @@ class RegisterState extends State<Register> {
                           Text('You have already an account ?'),
                           GestureDetector(
                             child: Text(' Sign in', style: TextStyle(color: Theme.of(context).primaryColor),),
-                            onTap: () {},
+                            onTap: () => Navigator.pushReplacementNamed(context, '/signIn'),
                           )
                         ],
                       )
@@ -107,7 +110,7 @@ class RegisterState extends State<Register> {
     );
   }
 
-  void _register() async {
+  Future<dynamic> _register() async {
     try {
       User user = (await auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -126,6 +129,7 @@ class RegisterState extends State<Register> {
         _errorMsg = e.message;
       });
     }
+    return _success;
   }
 
 

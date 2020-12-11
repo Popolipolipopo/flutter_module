@@ -72,7 +72,10 @@ class LoginState extends State<Login> {
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 80),
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
-                              _login();
+                              _login().then((result) {
+                                if (result == true)
+                                  Navigator.pushReplacementNamed(context, '/home');
+                              });
                             }
                           },
                           child: const Text('Sign in'),
@@ -83,7 +86,7 @@ class LoginState extends State<Login> {
                         child: Text(_success == null
                             ? ''
                             : (_success
-                            ? 'Successfully registered ' + _userEmail
+                            ? ''
                             : _errorMsg), style: TextStyle(color: Colors.red),
                         textAlign: TextAlign.center,),
                       ),
@@ -93,7 +96,7 @@ class LoginState extends State<Login> {
                           Text('You have already an account ?'),
                           GestureDetector(
                             child: Text(' Sign up', style: TextStyle(color: Theme.of(context).primaryColor),),
-                            onTap: () {},
+                            onTap: () => Navigator.pushReplacementNamed(context, '/signUp'),
                           )
                         ],
                       )
@@ -106,7 +109,7 @@ class LoginState extends State<Login> {
     );
   }
 
-  void _login() async {
+  Future<dynamic> _login() async {
     try {
       User user = (await auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -125,6 +128,7 @@ class LoginState extends State<Login> {
         _errorMsg = e.message;
       });
     }
+    return _success;
   }
 
 

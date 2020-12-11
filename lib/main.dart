@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'Pages/HomePage.dart';
+import 'Pages/HomePage.dart';
 import 'Pages/Login.dart';
 import 'Pages/Register.dart';
 
@@ -38,6 +39,12 @@ class MyApp extends StatelessWidget {
           bodyText1: TextStyle(fontSize: 12, color: Colors.white),
         ),
       ),
+      initialRoute: '/',
+      routes: {
+        '/signIn' : (context) => Login(),
+        '/signUp' : (context) => Register(),
+        '/home' : (context) => HomePage(),
+      },
       home: Login(),
     );
   }
