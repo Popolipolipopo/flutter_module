@@ -1,8 +1,9 @@
+import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_module/Pages/Page1.dart';
 import 'package:flutter_module/Pages/Page2.dart';
-import 'package:flutter_module/Pages/Page3.dart';
+import 'package:flutter_module/Pages/Menu.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,40 +12,79 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  List<Widget> _tabs = [Page1(), Page2(), Page3()];
+  List<String> _titles = ['WAVE', 'POST', 'MENU'];
+  List<Widget> _tabs = [Page1(), Page2(), Menu()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter App'),
+        title: Text(_titles[_selectedIndex]),
+        backgroundColor: Theme.of(context).backgroundColor,
+        actions: [
+          Container(
+            padding: EdgeInsets.all(5),
+            child: RawMaterialButton(
+              child: Icon(Icons.send, color: Theme.of(context).accentColor),
+              fillColor: Color(0xFF3A4048),
+//              padding: EdgeInsets.all(10.0),
+              shape: CircleBorder(),
+              onPressed: () {},
+            )
+          )
+        ],
       ),
       body: Center(
         child: _tabs.elementAt(_selectedIndex),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text('Home'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            title: Text('Profile'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            title: Text('List'),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(0)),
+          boxShadow: <BoxShadow> [
+            BoxShadow(
+              color: Colors.black,
+              blurRadius: 1,
+            )
+          ]
+        ),
+        child: _navigationBar(),
       ),
+    );
+  }
+
+  Widget _navigationBar() {
+    return (
+        Container(
+          padding: EdgeInsets.only(top: 12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).backgroundColor,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(0)),
+          ),
+          child: CustomNavigationBar(
+            iconSize: 26.0,
+            selectedColor: Theme.of(context).primaryColor,
+            strokeColor: Color(0x30040307),
+            unSelectedColor: Color(0xffacacac),
+            backgroundColor: Theme.of(context).backgroundColor,
+            items: [
+              CustomNavigationBarItem(
+                icon: Icon(Icons.home),
+              ),
+              CustomNavigationBarItem(
+                icon: Icon(Icons.add_circle),
+              ),
+              CustomNavigationBarItem(
+                icon: Icon(Icons.format_list_bulleted),
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+          ),
+        )
     );
   }
 }

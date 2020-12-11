@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'Pages/HomePage.dart';
-import 'Pages/HomePage.dart';
+import 'Pages/Login.dart';
 import 'Pages/Login.dart';
 import 'Pages/Register.dart';
 
@@ -22,7 +22,11 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         primaryColor: Color(0xFF7E6FEA),
         accentColor: Color(0xFFFFFFFF),
+        backgroundColor: Color(0xFF2A3442),
         scaffoldBackgroundColor: Color(0xFF2A3442),
+        iconTheme: IconThemeData(
+          color: Color(0xFF3A4048)
+        ),
         buttonTheme: ButtonThemeData(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
           buttonColor: Color(0xFF7E6FEA),
@@ -44,6 +48,10 @@ class MyApp extends StatelessWidget {
         '/signIn' : (context) => Login(),
         '/signUp' : (context) => Register(),
         '/home' : (context) => HomePage(),
+        '/home/profile' : (context) => HomePage(),
+        '/home/fav' : (context) => HomePage(),
+        '/home/settings' : (context) => HomePage(),
+        '/deco' : (context) => Login(),
       },
       home: Login(),
     );
