@@ -29,7 +29,7 @@ dependencies:
   firebase_storage: ^5.2.0
   beauty_textfield: ^0.0.1
   custom_navigation_bar: ^0.6.0
-
+  image_picker: ^0.6.7
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

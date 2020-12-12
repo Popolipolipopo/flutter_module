@@ -1,4 +1,5 @@
 import 'package:beauty_textfield/beauty_textfield.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +13,12 @@ class Register extends StatefulWidget {
 class RegisterState extends State<Register> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final FirebaseAuth auth = FirebaseAuth.instance;
+  final databaseReference = FirebaseFirestore.instance;
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _userController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordController2 = TextEditingController();
   bool _success;
-  String _userEmail;
   String _errorMsg;
 
   @override
@@ -65,8 +67,8 @@ class RegisterState extends State<Register> {
                           )
                       ),
                       Column(
-                        children: form(_emailController, _passwordController,
-                            _passwordController2),
+                        children: form(_emailController, _userController,
+                            _passwordController, _passwordController2),
                       ),
                       Container(
                         alignment: Alignment.center,
@@ -114,12 +116,17 @@ class RegisterState extends State<Register> {
     try {
       User user = (await auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
-        password: _passwordController.text,)
+        password: _passwordController.text)
       ).user;
       if (user != null) {
+        await databaseReference.collection("profiles").doc(user.email)
+            .set({
+          'mail': user.email,
+          'username': _userController.text,
+          'profile_picture': 'default.jpg',
+        });
         setState(() {
           _success = true;
-          _userEmail = user.email;
         });
       }
     } catch (e) {
@@ -133,7 +140,8 @@ class RegisterState extends State<Register> {
   }
 
 
-  List <Widget> form(TextEditingController email, TextEditingController pass,
+  List <Widget> form(TextEditingController email, TextEditingController user,
+      TextEditingController pass,
       TextEditingController confirm) {
     return [
       TextFormField(
@@ -157,6 +165,26 @@ class RegisterState extends State<Register> {
       ),
       SizedBox(height: widget.height * 0.03),
       TextFormField(
+        controller: user,
+        decoration: new InputDecoration(
+          labelText: "Username",
+          fillColor: Colors.white,
+          border: new OutlineInputBorder(
+            borderRadius: new BorderRadius.circular(25.0),
+            borderSide: new BorderSide(
+            ),
+          ),
+        ),
+        validator: (String value) {
+          if (value.isEmpty) {
+            return 'Please enter some text';
+          }
+          return null;
+        },
+        keyboardType: TextInputType.text,
+      ),
+      SizedBox(height: widget.height * 0.03),
+      TextFormField(
         controller: pass,
         decoration: new InputDecoration(
           labelText: "Password",
@@ -169,7 +197,7 @@ class RegisterState extends State<Register> {
         ),
         validator: (String value) {
           if (value != confirm.text) {
-          return 'Passwords are not the same';
+            return 'Passwords are not the same';
           }
           else if (value.isEmpty) {
             return 'Please enter some text';

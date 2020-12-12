@@ -2,7 +2,7 @@ import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_module/Pages/Page1.dart';
-import 'package:flutter_module/Pages/Page2.dart';
+import 'package:flutter_module/Pages/Post.dart';
 import 'package:flutter_module/Pages/Menu.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,15 +11,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
   List<String> _titles = ['WAVE', 'POST', 'MENU'];
-  List<Widget> _tabs = [Page1(), Page2(), Menu()];
+  List<Widget> _tabs;
 
   @override
   Widget build(BuildContext context) {
+    _tabs = [
+      Page1(),
+      Post(onClick: (value) { setState(() {selectedIndex = value;});}),
+      Menu()];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(_titles[_selectedIndex]),
+        title: Text(_titles[selectedIndex]),
         backgroundColor: Theme.of(context).backgroundColor,
         actions: [
           Container(
@@ -35,7 +40,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Center(
-        child: _tabs.elementAt(_selectedIndex),
+        child: _tabs.elementAt(selectedIndex),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -77,10 +82,10 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.format_list_bulleted),
               ),
             ],
-            currentIndex: _selectedIndex,
+            currentIndex: selectedIndex,
             onTap: (index) {
               setState(() {
-                _selectedIndex = index;
+                selectedIndex = index;
               });
             },
           ),
