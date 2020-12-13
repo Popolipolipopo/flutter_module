@@ -2,6 +2,7 @@ import 'package:beauty_textfield/beauty_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   double height;
@@ -23,6 +24,21 @@ class LoginState extends State<Login> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    skipIfConnected();
+    super.initState();
+  }
+
+  void skipIfConnected() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = prefs.getString("email");
+    print("Already logged as : " + email);
+    if (email != null && email.isNotEmpty) {
+      Navigator.pushReplacementNamed(context, '/home');
+    }
   }
 
   @override
@@ -73,8 +89,10 @@ class LoginState extends State<Login> {
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
                               _login().then((result) {
-                                if (result == true)
+                                if (result == true) {
+                                  saveEmail();
                                   Navigator.pushReplacementNamed(context, '/home');
+                                }
                               });
                             }
                           },
@@ -107,6 +125,11 @@ class LoginState extends State<Login> {
           ],
         )
     );
+  }
+
+  void saveEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("email", _emailController.text);
   }
 
   Future<dynamic> _login() async {

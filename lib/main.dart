@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'Pages/HomePage.dart';
 import 'Pages/Login.dart';
+import 'Pages/Profile.dart';
 import 'Pages/Register.dart';
 
 void main() async {
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
         '/home/fav' : (context) => HomePage(),
         '/home/settings' : (context) => HomePage(),
         '/deco' : (context) => Login(),
+        '/profile' : (context) => Profile()
       },
       home: Login(),
     );

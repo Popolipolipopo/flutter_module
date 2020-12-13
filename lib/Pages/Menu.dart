@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Menu extends StatelessWidget {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -21,7 +22,7 @@ class Menu extends StatelessWidget {
             onTap: () {
               (pages[index][0] == 'Sign out') ?
               signOut(context) :
-              Navigator.pushReplacementNamed(context, pages[index][1]);
+              Navigator.pushNamed(context, pages[index][1]);
             },
             child: Card(
               color: Color(0xFF3A4048),
@@ -46,8 +47,15 @@ class Menu extends StatelessWidget {
       )
     );
   }
+
+  void unsaveEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("email", "");
+  }
+
   void signOut(context) {
     print("DECO");
+    unsaveEmail();
     auth.signOut().then(
             (value) => Navigator.pushReplacementNamed(context, '/deco')
     );
