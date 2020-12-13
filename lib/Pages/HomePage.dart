@@ -1,7 +1,7 @@
 import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_module/Pages/Page1.dart';
+import 'package:flutter_module/Pages/NewsFeed.dart';
 import 'package:flutter_module/Pages/Post.dart';
 import 'package:flutter_module/Pages/Menu.dart';
 
@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     _tabs = [
-      Page1(),
+      NewsFeed(),
       Post(onClick: (value) { setState(() {selectedIndex = value;});}),
       Menu()];
 
