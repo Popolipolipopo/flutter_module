@@ -32,13 +32,12 @@ class _PostState extends State<Post> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ListView(
+        body: Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          children: [
-            Form(
+            child: Form(
               key: _formKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -67,9 +66,7 @@ class _PostState extends State<Post> {
                       labelText: "What's up ?",
                       fillColor: Colors.white,
                       border: new OutlineInputBorder(
-                        borderRadius: new BorderRadius.circular(25.0),
-                        borderSide: new BorderSide(
-                        ),
+                        borderRadius: new BorderRadius.circular(5.0),
                       ),
                     ),
                     minLines: 10,
@@ -85,7 +82,15 @@ class _PostState extends State<Post> {
                   Center(
                     child: (_imageFile == null)
                         ? SizedBox.shrink()
-                        : Image.file(_imageFile),
+                        : GestureDetector(
+                      onTap: () { setState(() {_imageFile = null;});},
+                      child: Image.file(
+                        _imageFile,
+                        fit: BoxFit.fitWidth,
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        width: MediaQuery.of(context).size.width,
+                      ),
+                    ),
                   ),
                   Center(
                     child: IconButton(
@@ -96,7 +101,6 @@ class _PostState extends State<Post> {
                 ],
               ),
             )
-          ],
         )
     );
   }
