@@ -56,7 +56,7 @@ class _SinglePostState extends State<SinglePost> {
               width: MediaQuery.of(context).size.width,
             ),
           )),
-          Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.02),),
+          (this.widget.postInfo.data()["path"] == null || this.widget.postInfo.data()["path"].isEmpty ? Container() : Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.02),)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -104,9 +104,7 @@ class _SinglePostState extends State<SinglePost> {
               Row(
                 children: [
                   IconButton(icon: (_postInfo["comments"].length != 0 ? Icon(Icons.mode_comment) : Icon(Icons.mode_comment_outlined)),
-                    color: (_postInfo["comments"].length != 0 ? Colors.blue : null), onPressed: () {
-
-                    },
+                    color: (_postInfo["comments"].length != 0 ? Colors.blue : null), onPressed: () {},
                   ),
                   Text(_postInfo["comments"].length.toString())
                 ],
