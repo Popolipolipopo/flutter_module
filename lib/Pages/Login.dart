@@ -35,8 +35,8 @@ class LoginState extends State<Login> {
   void skipIfConnected() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String email = prefs.getString("email");
-    print("Already logged as : " + email);
     if (email != null && email.isNotEmpty) {
+      print("Already logged as : " + email);
       Navigator.pushReplacementNamed(context, '/home');
     }
   }

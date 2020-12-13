@@ -129,10 +129,10 @@ class FirebaseInteractions {
         .set({key: FieldValue.arrayUnion([value])}, SetOptions(merge: true));
   }
 
-  static Future<void> uploadPhoto(File file, String name, int index) async {
+  static Future<void> uploadPhoto(File file, String name) async {
     try {
       await firebase_storage.FirebaseStorage.instance
-          .ref('posts/' + name + "/" + index.toString())
+          .ref('profile_picture/' + name + ".jpg")
           .putFile(file);
     } on firebase_core.FirebaseException catch (e) {
 /*
