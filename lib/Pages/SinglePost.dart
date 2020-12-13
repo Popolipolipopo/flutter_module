@@ -46,15 +46,15 @@ class _SinglePostState extends State<SinglePost> {
           Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.02),),
           (this.widget.postInfo.data()["path"] == null || this.widget.postInfo.data()["path"].isEmpty ? Container() :
           Card(
-              child: Image.network(
-                  "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/"
-                      + Uri.encodeComponent(this.widget.postInfo.data()["path"])
-                      + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b"
-                      + DateTime.now().millisecondsSinceEpoch.toString(),
-                fit: BoxFit.fitWidth,
-                height: MediaQuery.of(context).size.height * 0.2,
-                width: MediaQuery.of(context).size.width,
-              ),
+            child: Image.network(
+              "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/"
+                  + Uri.encodeComponent(this.widget.postInfo.data()["path"])
+                  + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b"
+                  + DateTime.now().millisecondsSinceEpoch.toString(),
+              fit: BoxFit.fitWidth,
+              height: MediaQuery.of(context).size.height * 0.2,
+              width: MediaQuery.of(context).size.width,
+            ),
           )),
           Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.02),),
           Row(
@@ -101,9 +101,16 @@ class _SinglePostState extends State<SinglePost> {
                     });
                   }
                 },),
-              IconButton(icon: Icon(Icons.mode_comment_outlined), onPressed: () {
-                FirebaseInteractions.addFieldToArray("posts", this.widget.postInfo.id, "comments", this.widget.email);
-              },),
+              Row(
+                children: [
+                  IconButton(icon: (_postInfo["comments"].length != 0 ? Icon(Icons.mode_comment) : Icon(Icons.mode_comment_outlined)),
+                    color: (_postInfo["comments"].length != 0 ? Colors.blue : null), onPressed: () {
+
+                    },
+                  ),
+                  Text(_postInfo["comments"].length.toString())
+                ],
+              )
             ],
           ),
           Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),),
