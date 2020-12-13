@@ -126,13 +126,14 @@ class _PostState extends State<Post> {
     });
   }
   Future<dynamic> post() async {
-    await uploadImageToFirebase(context);
+    if (_imageFile != null)
+      await uploadImageToFirebase(context);
     try {
       DocumentReference ref = await databaseReference.collection("posts")
           .add({
         'author': auth.currentUser.email,
         'message': textController.text,
-        'path' : 'posts/' + _imageName,
+        'path' : (_imageName == null) ? '' : 'posts/' + _imageName,
       });
       if (ref != null) {
         return true;
