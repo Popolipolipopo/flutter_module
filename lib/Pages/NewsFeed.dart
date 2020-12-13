@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_module/Utils/FirebaseInteractions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'SinglePost.dart';
 
@@ -13,6 +14,7 @@ class NewsFeed extends StatefulWidget {
 class _NewsFeedState extends State<NewsFeed> {
 
   List<QueryDocumentSnapshot> _posts = List<QueryDocumentSnapshot>();
+  String _email = "";
 
   @override
   void initState() {
@@ -20,10 +22,17 @@ class _NewsFeedState extends State<NewsFeed> {
     super.initState();
   }
 
+  Future<String> getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("email");
+  }
+
   void getPosts() async {
     List<QueryDocumentSnapshot> posts = await FirebaseInteractions.getDocumentsList("posts");
+    String email = await getEmail();
     setState(() {
       _posts = posts;
+      _email = email;
     });
   }
 
@@ -42,7 +51,7 @@ class _NewsFeedState extends State<NewsFeed> {
               );
             }
             index -= sepCount;
-            return SinglePost(postInfo: _posts[index]);
+            return SinglePost(postInfo: _posts[index], email: _email,);
           }),
     );
   }

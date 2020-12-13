@@ -134,6 +134,9 @@ class _PostState extends State<Post> {
         'author': auth.currentUser.email,
         'message': textController.text,
         'path' : (_imageName == null) ? '' : 'posts/' + _imageName,
+        'comments': [],
+        'likes': [],
+        'favorites': []
       });
       if (ref != null) {
         return true;
