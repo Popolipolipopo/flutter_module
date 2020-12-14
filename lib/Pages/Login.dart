@@ -70,10 +70,7 @@ class LoginState extends State<Login> {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
-                                child: Image.network(
-                                  'https://s3-alpha-sig.figma.com/img/dd52/8426/ec36cc62092b0309cf73052cf33056cd?Expires=1608508800&Signature=WCytEJrMfInsBSl9oqlBtMs62i0HPHawzDvcrASWO5KS~mWtdRsCDoai7Tv~GxHkyRZUOoKic~-5l8tu375sNJdf5nIZ-MoSnG2X3~qIjFpzbYs-jyLc-Ox97JnIqVh5mDnsz5thGP8qlAPCU21IJ~cdHPPVUnficYdW8i7JSPoVeGiRTu3eYLehzHSdkS7NQ2hjQ8l-ECNM2WyUf-BZnwffar8wmo69UguwIen1cq8BWOOxVEZvW30oJlTy-VWwiCGSr1dYAs28MS3TcZQuBiYjmkNbjZA3jmnjNLh22dk1l7Ra47AdjL4gFUEomFh7cIRVlB-lyaIqJQRCes2JgQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA',
-                                  height: widget.height * 0.2,
-                                ),
+                                child: Image.asset('assets/logo_wave.png', height: widget.height * 0.2,),
                               ),
                               Text('WAVE', style: TextStyle(fontSize: 26),)
                             ],
