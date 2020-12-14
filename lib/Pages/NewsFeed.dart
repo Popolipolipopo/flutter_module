@@ -38,19 +38,15 @@ class _NewsFeedState extends State<NewsFeed> {
 
   @override
   Widget build(BuildContext context) {
-    int sepCount = 0;
     return Scaffold(
-      body: ListView.builder(
-          itemCount: _posts.length * 2,
+      body: ListView.separated(
+          itemCount: _posts.length,
+          separatorBuilder: (context, index) {
+            return SizedBox(
+              height: MediaQuery.of(context).size.height * 0.005,
+            );
+          },
           itemBuilder: (context, index) {
-            if (index % 2 == 0) {
-              sepCount += 1;
-              return SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                height: MediaQuery.of(context).size.height * 0.005,
-              );
-            }
-            index -= sepCount;
             return SinglePost(postInfo: _posts[index], email: _email,);
           }),
     );
