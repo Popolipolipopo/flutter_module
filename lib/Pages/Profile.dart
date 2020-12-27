@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_module/Utils/FirebaseInteractions.dart';
@@ -30,11 +31,11 @@ class _ProfileState extends State<Profile> {
 
   void getProfileInfo() async {
     String email = await getEmail();
-    Map<String, dynamic> userInfo = await FirebaseInteractions.getDocument("profiles", email);
+    DocumentSnapshot userInfo = await FirebaseInteractions.getDocument("profiles", email);
     setState(() {
       _emailController.text = userInfo["mail"];
       _usernameController.text = userInfo["username"];
-      _imageUrl = userInfo["profile_picture"];
+      _imageUrl = userInfo.data()["profile_picture"];
       _loaded = true;
     });
   }

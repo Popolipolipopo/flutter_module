@@ -13,7 +13,7 @@ class NewsFeed extends StatefulWidget {
 
 class _NewsFeedState extends State<NewsFeed> {
 
-  List<QueryDocumentSnapshot> _posts = List<QueryDocumentSnapshot>();
+  List<DocumentSnapshot> _posts = List<DocumentSnapshot>();
   String _email = "";
 
   @override
@@ -28,7 +28,7 @@ class _NewsFeedState extends State<NewsFeed> {
   }
 
   void getPosts() async {
-    List<QueryDocumentSnapshot> posts = await FirebaseInteractions.getDocumentsList("posts");
+    List<DocumentSnapshot> posts = await FirebaseInteractions.getDocumentsList("posts");
     String email = await getEmail();
     setState(() {
       _posts = posts;

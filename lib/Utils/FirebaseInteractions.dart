@@ -84,12 +84,12 @@ class FirebaseInteractions {
     return FirebaseAuth.instance.currentUser;
   }
 
-  static Future<Map<String, dynamic>> getDocument(String collection, String document) async {
+  static Future<DocumentSnapshot> getDocument(String collection, String document) async {
     return await FirebaseFirestore.instance
         .collection(collection)
         .doc(document)
         .get()
-        .then((DocumentSnapshot documentSnapshot) => documentSnapshot.data());
+        .then((DocumentSnapshot documentSnapshot) => documentSnapshot);
   }
 
   static Future<List<QueryDocumentSnapshot>> getDocumentWithQuery(String collection, String field, String value) async {
