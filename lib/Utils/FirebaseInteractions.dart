@@ -100,6 +100,14 @@ class FirebaseInteractions {
         .then((QuerySnapshot querySnapshot) => querySnapshot.docs.toList());
   }
 
+  static Future<List<QueryDocumentSnapshot>> getDocumentWithQueryContains(String collection, String field, String value) async {
+    return await FirebaseFirestore.instance
+        .collection(collection)
+        .where(field, arrayContains: value)
+        .get()
+        .then((QuerySnapshot querySnapshot) => querySnapshot.docs.toList());
+  }
+
   static Future<List<QueryDocumentSnapshot>> getDocumentsList(String collection) async {
     return await FirebaseFirestore.instance
         .collection(collection)

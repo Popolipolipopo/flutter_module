@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'Pages/Favorites.dart';
 import 'Pages/HomePage.dart';
 import 'Pages/Login.dart';
 import 'Pages/Profile.dart';
@@ -52,7 +53,8 @@ class MyApp extends StatelessWidget {
         '/home/fav' : (context) => HomePage(),
         '/home/settings' : (context) => HomePage(),
         '/deco' : (context) => Login(),
-        '/profile' : (context) => Profile()
+        '/profile' : (context) => Profile(),
+        '/fav': (context) => Favorites(),
       },
       home: Login(),
     );
