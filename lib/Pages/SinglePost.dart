@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_module/Utils/FirebaseInteractions.dart';
+import 'package:vibration/vibration.dart';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import 'Comments.dart';
 
@@ -16,11 +19,13 @@ class SinglePost extends StatefulWidget {
 class _SinglePostState extends State<SinglePost> {
 
   DocumentSnapshot _postInfo;
+  AudioCache _audioCache;
 
   @override
   void initState() {
     _postInfo = this.widget.postInfo;
     super.initState();
+    _audioCache = AudioCache(prefix: "audio/", fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP));
   }
 
   void refresh() async {
@@ -32,6 +37,7 @@ class _SinglePostState extends State<SinglePost> {
 
   @override
   Widget build(BuildContext context) {
+
     return Card(
       color: Colors.transparent,
       child: Column(
@@ -71,6 +77,8 @@ class _SinglePostState extends State<SinglePost> {
               IconButton(icon: (_postInfo.data()["likes"].contains(this.widget.email) ? Icon(Icons.favorite) : Icon(Icons.favorite_border)),
                 color: (_postInfo.data()["likes"].contains(this.widget.email) ? Colors.red : null),
                 onPressed: () async {
+                  Vibration.vibrate();
+                  _audioCache.play('like.mp3');
                   if (_postInfo.data()["likes"].contains(this.widget.email)) {
                     List<dynamic> tmp = _postInfo.data()["likes"];
                     tmp.remove(this.widget.email);
