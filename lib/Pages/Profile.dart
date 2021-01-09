@@ -33,8 +33,8 @@ class _ProfileState extends State<Profile> {
     String email = await getEmail();
     DocumentSnapshot userInfo = await FirebaseInteractions.getDocument("profiles", email);
     setState(() {
-      _emailController.text = userInfo["mail"];
-      _usernameController.text = userInfo["username"];
+      _emailController.text = userInfo.data()["mail"];
+      _usernameController.text = userInfo.data()["username"];
       _imageUrl = userInfo.data()["profile_picture"];
       _loaded = true;
     });
@@ -73,10 +73,20 @@ class _ProfileState extends State<Profile> {
                 Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.08),),
                 GestureDetector(
                   child: CircleAvatar(
-                    minRadius: MediaQuery.of(context).size.width * 0.2,
-                    maxRadius: MediaQuery.of(context).size.width * 0.2,
-                    backgroundImage: NetworkImage(_imageUrl + DateTime.now().millisecondsSinceEpoch.toString()),
+                    radius: MediaQuery.of(context).size.width * 0.2,
+                    backgroundImage: NetworkImage(_imageUrl),
                     backgroundColor: Colors.transparent,
+                    child: CircleAvatar(
+                        backgroundColor: Colors.black.withOpacity(0.4),
+                        radius: MediaQuery.of(context).size.width * 0.2,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.2),
+                          child: Text(
+                            'Tap to Edit',
+                            style: TextStyle(color: Colors.white,),
+                          ),
+                        )
+                    ),
                   ),
                   onTap: () {
                     pickImage();
