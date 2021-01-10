@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -15,6 +16,7 @@ Future<String> signInWithGoogle() async {
   final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
   final GoogleSignInAuthentication googleSignInAuthentication =
   await googleSignInAccount.authentication;
+  final databaseReference = FirebaseFirestore.instance;
 
   final AuthCredential credential = GoogleAuthProvider.credential(
     accessToken: googleSignInAuthentication.accessToken,
@@ -26,6 +28,14 @@ Future<String> signInWithGoogle() async {
   final User user = authResult.user;
 
   if (user != null) {
+
+    await databaseReference.collection("profiles").doc(user.email)
+        .set({
+      'mail': user.email,
+      'username': user.displayName,
+      'profile_picture': user.photoURL,
+    });
+
     // Checking if email and name is null
     assert(user.email != null);
     assert(user.displayName != null);
@@ -59,3 +69,4 @@ Future<void> signOutGoogle() async {
 
   print("User Signed Out");
 }
+
