@@ -21,6 +21,7 @@ class SinglePost extends StatefulWidget {
 class _SinglePostState extends State<SinglePost> {
 
   DocumentSnapshot _postInfo;
+  String urlFirestore = "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/";
   AudioCache _audioCache = AudioCache();
 
   @override
@@ -72,7 +73,7 @@ class _SinglePostState extends State<SinglePost> {
           (this.widget.postInfo.data()["path"] == null || this.widget.postInfo.data()["path"].isEmpty ? Container() :
           Card(
             child: Image.network(
-              "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/"
+                  urlFirestore
                   + Uri.encodeComponent(this.widget.postInfo.data()["path"])
                   + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b",
               fit: BoxFit.fitWidth,

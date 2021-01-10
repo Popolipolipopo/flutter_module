@@ -18,6 +18,7 @@ class RegisterState extends State<Register> {
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordController2 = TextEditingController();
+  String urlFirestore = "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2Fdefault.jpg?alt=media&token=5abdbdf7-73fc-475a-9857-413d3879f64f";
   bool _success;
   String _errorMsg;
 
@@ -120,7 +121,7 @@ class RegisterState extends State<Register> {
             .set({
           'mail': user.email,
           'username': _userController.text,
-          'profile_picture': 'https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2Fdefault.jpg?alt=media&token=5abdbdf7-73fc-475a-9857-413d3879f64f',
+          'profile_picture': urlFirestore,
         });
         setState(() {
           _success = true;

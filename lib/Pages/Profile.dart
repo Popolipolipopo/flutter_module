@@ -16,6 +16,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
 
   String _imageUrl = "";
+  String urlFirestore = "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2F";
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
@@ -173,11 +174,11 @@ class _ProfileState extends State<Profile> {
                 final pickedFile = await picker.getImage(source: ImageSource.gallery);
                 await FirebaseInteractions.uploadPhoto(File(pickedFile.path), _emailController.text);
                 await FirebaseInteractions.updateDocument("profiles", _emailController.text, {
-                  "profile_picture": "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2F" + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b"
+                  "profile_picture": urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b"
                 });
                 Navigator.of(context).pop();
                 setState(() {
-                  _imageUrl = "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2F" + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b";
+                  _imageUrl = urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b";
                 });
               },
             ),
@@ -187,11 +188,11 @@ class _ProfileState extends State<Profile> {
                 final pickedFile = await picker.getImage(source: ImageSource.camera);
                 await FirebaseInteractions.uploadPhoto(File(pickedFile.path), _emailController.text);
                 await FirebaseInteractions.updateDocument("profiles", _emailController.text, {
-                  "profile_picture": "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2F" + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b"
+                  "profile_picture": urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b"
                 });
                 Navigator.of(context).pop();
                 setState(() {
-                  _imageUrl = "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2F" + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b" + DateTime.now().millisecondsSinceEpoch.toString();
+                  _imageUrl = urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b" + DateTime.now().millisecondsSinceEpoch.toString();
                 });
               },
             ),
