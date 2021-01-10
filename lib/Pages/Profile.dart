@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +7,9 @@ import 'package:flutter_module/Utils/FirebaseInteractions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart' show rootBundle;
+
+import 'SinglePost.dart';
 
 class Profile extends StatefulWidget {
 
@@ -16,9 +20,15 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
 
   String _imageUrl = "";
+  String _urlFirestore = "";
+
+  List<DocumentSnapshot> _likes = List<DocumentSnapshot>();
+  List<DocumentSnapshot> _posts = List<DocumentSnapshot>();
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
+
+  int _selected = 0;
 
   final picker = ImagePicker();
 
@@ -32,10 +42,16 @@ class _ProfileState extends State<Profile> {
   void getProfileInfo() async {
     String email = await getEmail();
     DocumentSnapshot userInfo = await FirebaseInteractions.getDocument("profiles", email);
+    List<DocumentSnapshot> posts = await FirebaseInteractions.getDocumentWithQuery("posts", "author", email);
+    List<DocumentSnapshot> likes = await FirebaseInteractions.getDocumentWithQueryContains("posts", "likes", email);
+    Map<String, dynamic> config = jsonDecode(await rootBundle.loadString('assets/config.json'));
     setState(() {
       _emailController.text = userInfo.data()["mail"];
       _usernameController.text = userInfo.data()["username"];
       _imageUrl = userInfo.data()["profile_picture"];
+      _urlFirestore = config["firestore_url"] + "profile_picture/";
+      _posts = posts;
+      _likes = likes;
       _loaded = true;
     });
   }
@@ -69,6 +85,9 @@ class _ProfileState extends State<Profile> {
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
             child: ListView(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: ClampingScrollPhysics(),
               children: [
                 Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.08),),
                 GestureDetector(
@@ -135,18 +154,64 @@ class _ProfileState extends State<Profile> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05),),
-                SizedBox(
-                  width:  MediaQuery.of(context).size.width * 0.5,
-                  child: RaisedButton(
-/*
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 80),
-*/
-                      child: Text("CHANGE PASSWORD"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RaisedButton(
                       onPressed: () {
-
-                      }
+                        setState(() {
+                          _selected = 0;
+                        });
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15.0),
+                              bottomLeft: Radius.circular(15.0))),
+                      child: Text('Your posts'),
+                      color: _selected == 0 ? Colors.transparent : Theme.of(context).backgroundColor,
+                      textColor: Colors.white,
+                    ),
+                    RaisedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selected = 1;
+                        });
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(15.0),
+                              bottomRight: Radius.circular(15.0))),
+                      child: Text('Your likes'),
+                      color: _selected == 1 ? Colors.transparent : Theme.of(context).backgroundColor,
+                      textColor: Colors.white,
+                    ),
+                  ],
+                ),
+                Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),),
+                Container(
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                )
+                  child: ListView.separated(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      physics: ClampingScrollPhysics(),
+                      itemCount: _selected == 0 ? _posts.length : _likes.length,
+                      separatorBuilder: (context, index) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.005,
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        if (_selected == 0)
+                          return SinglePost(postInfo: _posts[index], email: _emailController.text,);
+                        else
+                          return SinglePost(postInfo: _likes[index], email: _emailController.text,);
+                      }),
+                ),
+                Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),),
               ],
             ),
           )) : Center(
@@ -173,11 +238,11 @@ class _ProfileState extends State<Profile> {
                 final pickedFile = await picker.getImage(source: ImageSource.gallery);
                 await FirebaseInteractions.uploadPhoto(File(pickedFile.path), _emailController.text);
                 await FirebaseInteractions.updateDocument("profiles", _emailController.text, {
-                  "profile_picture": "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2F" + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b"
+                  "profile_picture": _urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media"
                 });
                 Navigator.of(context).pop();
                 setState(() {
-                  _imageUrl = "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2F" + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b";
+                  _imageUrl = _urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media";
                 });
               },
             ),
@@ -187,11 +252,11 @@ class _ProfileState extends State<Profile> {
                 final pickedFile = await picker.getImage(source: ImageSource.camera);
                 await FirebaseInteractions.uploadPhoto(File(pickedFile.path), _emailController.text);
                 await FirebaseInteractions.updateDocument("profiles", _emailController.text, {
-                  "profile_picture": "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2F" + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b"
+                  "profile_picture": _urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media"
                 });
                 Navigator.of(context).pop();
                 setState(() {
-                  _imageUrl = "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2F" + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b" + DateTime.now().millisecondsSinceEpoch.toString();
+                  _imageUrl = _urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media" + DateTime.now().millisecondsSinceEpoch.toString();
                 });
               },
             ),
