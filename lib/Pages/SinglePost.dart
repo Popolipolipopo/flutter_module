@@ -58,7 +58,16 @@ class _SinglePostState extends State<SinglePost> {
   @override
   Widget build(BuildContext context) {
     if (_urlFirestore.isEmpty) {
-      return CircularProgressIndicator(backgroundColor: Colors.white,);
+      return Container(
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.2,
+          child: Card(
+              color: Colors.transparent,
+              child: Center(
+                child: CircularProgressIndicator(backgroundColor: Colors.white,),
+              )
+          )
+      );
     }
     return Card(
       color: Colors.transparent,
@@ -84,7 +93,7 @@ class _SinglePostState extends State<SinglePost> {
           (this.widget.postInfo.data()["path"] == null || this.widget.postInfo.data()["path"].isEmpty ? Container() :
           Card(
             child: Image.network(
-                  _urlFirestore
+              _urlFirestore
                   + Uri.encodeComponent(this.widget.postInfo.data()["path"])
                   + "?alt=media",
               fit: BoxFit.fitWidth,
@@ -138,8 +147,8 @@ class _SinglePostState extends State<SinglePost> {
                 children: [
                   IconButton(icon: (_postInfo.data()["comments"].length != 0 ? Icon(Icons.mode_comment) : Icon(Icons.mode_comment_outlined)),
                     color: (_postInfo.data()["comments"].length != 0 ? Colors.blue : null), onPressed: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(builder: (context) => Comments(post: _postInfo),),);
-                    refresh();
+                      await Navigator.of(context).push(MaterialPageRoute(builder: (context) => Comments(post: _postInfo),),);
+                      refresh();
                     },
                   ),
                   Text(_postInfo.data()["comments"].length.toString())
