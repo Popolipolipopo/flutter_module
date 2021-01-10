@@ -7,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
+import 'SinglePost.dart';
+
 class Profile extends StatefulWidget {
 
   @override
@@ -18,8 +20,13 @@ class _ProfileState extends State<Profile> {
   String _imageUrl = "";
   String urlFirestore = "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2F";
 
+  List<DocumentSnapshot> _likes = List<DocumentSnapshot>();
+  List<DocumentSnapshot> _posts = List<DocumentSnapshot>();
+
   TextEditingController _emailController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
+
+  int _selected = 0;
 
   final picker = ImagePicker();
 
@@ -33,10 +40,14 @@ class _ProfileState extends State<Profile> {
   void getProfileInfo() async {
     String email = await getEmail();
     DocumentSnapshot userInfo = await FirebaseInteractions.getDocument("profiles", email);
+    List<DocumentSnapshot> posts = await FirebaseInteractions.getDocumentWithQuery("posts", "author", email);
+    List<DocumentSnapshot> likes = await FirebaseInteractions.getDocumentWithQueryContains("posts", "likes", email);
     setState(() {
       _emailController.text = userInfo.data()["mail"];
       _usernameController.text = userInfo.data()["username"];
       _imageUrl = userInfo.data()["profile_picture"];
+      _posts = posts;
+      _likes = likes;
       _loaded = true;
     });
   }
@@ -70,6 +81,9 @@ class _ProfileState extends State<Profile> {
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
             child: ListView(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: ClampingScrollPhysics(),
               children: [
                 Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.08),),
                 GestureDetector(
@@ -136,17 +150,62 @@ class _ProfileState extends State<Profile> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05),),
-                SizedBox(
-                  width:  MediaQuery.of(context).size.width * 0.5,
-                  child: RaisedButton(
-/*
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 80),
-*/
-                      child: Text("CHANGE PASSWORD"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RaisedButton(
                       onPressed: () {
-
-                      }
+                        setState(() {
+                          _selected = 0;
+                        });
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15.0),
+                              bottomLeft: Radius.circular(15.0))),
+                      child: Text('Your posts'),
+                      color: _selected == 0 ? Colors.transparent : Theme.of(context).backgroundColor,
+                      textColor: Colors.white,
+                    ),
+                    RaisedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selected = 1;
+                        });
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(15.0),
+                              bottomRight: Radius.circular(15.0))),
+                      child: Text('Your likes'),
+                      color: _selected == 1 ? Colors.transparent : Theme.of(context).backgroundColor,
+                      textColor: Colors.white,
+                    ),
+                  ],
+                ),
+                Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),),
+                Container(
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(15),
                   ),
+                  child: ListView.separated(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      physics: ClampingScrollPhysics(),
+                      itemCount: _selected == 0 ? _posts.length : _likes.length,
+                      separatorBuilder: (context, index) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.005,
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        if (_selected == 0)
+                          return SinglePost(postInfo: _posts[index], email: _emailController.text,);
+                        else
+                          return SinglePost(postInfo: _likes[index], email: _emailController.text,);
+                      }),
                 )
               ],
             ),
