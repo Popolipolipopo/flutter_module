@@ -8,7 +8,6 @@ class Menu extends StatelessWidget {
   List<dynamic> pages = [
     ['Profile', '/profile', Icons.person],
     ['Favorites', '/fav', Icons.bookmark],
-    ['Settings', '/settings', Icons.settings],
     ['Sign out', '/deco', Icons.exit_to_app],
   ];
 
