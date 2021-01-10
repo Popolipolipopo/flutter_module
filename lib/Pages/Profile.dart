@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_module/Utils/FirebaseInteractions.dart';
+import 'package:flutter_module/Utils/SignWithGoogle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -21,6 +22,7 @@ class _ProfileState extends State<Profile> {
 
   String _imageUrl = "";
   String _urlFirestore = "";
+  String mail;
 
   List<DocumentSnapshot> _likes = List<DocumentSnapshot>();
   List<DocumentSnapshot> _posts = List<DocumentSnapshot>();
@@ -40,8 +42,12 @@ class _ProfileState extends State<Profile> {
   }
 
   void getProfileInfo() async {
-    String email = await getEmail();
-    DocumentSnapshot userInfo = await FirebaseInteractions.getDocument("profiles", email);
+    if (getEmail()!= null) {
+      mail = email;
+    } else
+      mail = await getEmail();
+
+    DocumentSnapshot userInfo = await FirebaseInteractions.getDocument("profiles", mail);
     List<DocumentSnapshot> posts = await FirebaseInteractions.getDocumentWithQuery("posts", "author", email);
     List<DocumentSnapshot> likes = await FirebaseInteractions.getDocumentWithQueryContains("posts", "likes", email);
     Map<String, dynamic> config = jsonDecode(await rootBundle.loadString('assets/config.json'));
