@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_module/Utils/FirebaseInteractions.dart';
 import 'package:vibration/vibration.dart';
 import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/src/foundation/constants.dart';
 import 'dart:io';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
 
 import 'Comments.dart';
 
@@ -21,13 +22,14 @@ class SinglePost extends StatefulWidget {
 class _SinglePostState extends State<SinglePost> {
 
   DocumentSnapshot _postInfo;
-  String urlFirestore = "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/";
+  String _urlFirestore = "";
   AudioCache _audioCache = AudioCache();
 
   @override
   void initState() {
-    _postInfo = this.widget.postInfo;
     super.initState();
+    _postInfo = this.widget.postInfo;
+    getConfig();
     if (kIsWeb) {
       // Calls to Platform.isIOS fails on web
       return;
@@ -39,6 +41,13 @@ class _SinglePostState extends State<SinglePost> {
     }
   }
 
+  void getConfig() async {
+    Map<String, dynamic> config = jsonDecode(await rootBundle.loadString('assets/config.json'));
+    setState(() {
+      _urlFirestore = config["firestore_url"];
+    });
+  }
+
   void refresh() async {
     DocumentSnapshot tmp = await FirebaseInteractions.getDocument("posts", this.widget.postInfo.id);
     setState(() {
@@ -48,7 +57,9 @@ class _SinglePostState extends State<SinglePost> {
 
   @override
   Widget build(BuildContext context) {
-
+    if (_urlFirestore.isEmpty) {
+      return CircularProgressIndicator(backgroundColor: Colors.white,);
+    }
     return Card(
       color: Colors.transparent,
       child: Column(
@@ -73,9 +84,9 @@ class _SinglePostState extends State<SinglePost> {
           (this.widget.postInfo.data()["path"] == null || this.widget.postInfo.data()["path"].isEmpty ? Container() :
           Card(
             child: Image.network(
-                  urlFirestore
+                  _urlFirestore
                   + Uri.encodeComponent(this.widget.postInfo.data()["path"])
-                  + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b",
+                  + "?alt=media",
               fit: BoxFit.fitWidth,
               height: MediaQuery.of(context).size.height * 0.2,
               width: MediaQuery.of(context).size.width,

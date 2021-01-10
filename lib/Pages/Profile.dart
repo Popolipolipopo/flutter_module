@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +7,7 @@ import 'package:flutter_module/Utils/FirebaseInteractions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'SinglePost.dart';
 
@@ -18,7 +20,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
 
   String _imageUrl = "";
-  String urlFirestore = "https://firebasestorage.googleapis.com/v0/b/flutter-6744b.appspot.com/o/profile_picture%2F";
+  String _urlFirestore = "";
 
   List<DocumentSnapshot> _likes = List<DocumentSnapshot>();
   List<DocumentSnapshot> _posts = List<DocumentSnapshot>();
@@ -42,10 +44,12 @@ class _ProfileState extends State<Profile> {
     DocumentSnapshot userInfo = await FirebaseInteractions.getDocument("profiles", email);
     List<DocumentSnapshot> posts = await FirebaseInteractions.getDocumentWithQuery("posts", "author", email);
     List<DocumentSnapshot> likes = await FirebaseInteractions.getDocumentWithQueryContains("posts", "likes", email);
+    Map<String, dynamic> config = jsonDecode(await rootBundle.loadString('assets/config.json'));
     setState(() {
       _emailController.text = userInfo.data()["mail"];
       _usernameController.text = userInfo.data()["username"];
       _imageUrl = userInfo.data()["profile_picture"];
+      _urlFirestore = config["firestore_url"] + "profile_picture/";
       _posts = posts;
       _likes = likes;
       _loaded = true;
@@ -206,7 +210,8 @@ class _ProfileState extends State<Profile> {
                         else
                           return SinglePost(postInfo: _likes[index], email: _emailController.text,);
                       }),
-                )
+                ),
+                Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),),
               ],
             ),
           )) : Center(
@@ -233,11 +238,11 @@ class _ProfileState extends State<Profile> {
                 final pickedFile = await picker.getImage(source: ImageSource.gallery);
                 await FirebaseInteractions.uploadPhoto(File(pickedFile.path), _emailController.text);
                 await FirebaseInteractions.updateDocument("profiles", _emailController.text, {
-                  "profile_picture": urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b"
+                  "profile_picture": _urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media"
                 });
                 Navigator.of(context).pop();
                 setState(() {
-                  _imageUrl = urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b";
+                  _imageUrl = _urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media";
                 });
               },
             ),
@@ -247,11 +252,11 @@ class _ProfileState extends State<Profile> {
                 final pickedFile = await picker.getImage(source: ImageSource.camera);
                 await FirebaseInteractions.uploadPhoto(File(pickedFile.path), _emailController.text);
                 await FirebaseInteractions.updateDocument("profiles", _emailController.text, {
-                  "profile_picture": urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b"
+                  "profile_picture": _urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media"
                 });
                 Navigator.of(context).pop();
                 setState(() {
-                  _imageUrl = urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media&token=43ca32a6-625a-4fc5-a9f0-5c95e056392b" + DateTime.now().millisecondsSinceEpoch.toString();
+                  _imageUrl = _urlFirestore + Uri.encodeComponent(_emailController.text + ".jpg") + "?alt=media" + DateTime.now().millisecondsSinceEpoch.toString();
                 });
               },
             ),

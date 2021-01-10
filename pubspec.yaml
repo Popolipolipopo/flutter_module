@@ -55,6 +55,7 @@ flutter:
     - assets/like.mp3
     - assets/bookmark.mp3
     - assets/google_logo.png
+    - assets/config.json
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
