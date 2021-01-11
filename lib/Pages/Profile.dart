@@ -4,9 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_module/Utils/FirebaseInteractions.dart';
-import 'package:flutter_module/Utils/SignWithGoogle.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_module/Utils/SignWithGoogle.dart';
 import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -42,14 +42,16 @@ class _ProfileState extends State<Profile> {
   }
 
   void getProfileInfo() async {
-    if (getEmail()!= null) {
+
+    mail = await getEmail();
+
+    if (mail == null) {
       mail = email;
-    } else
-      mail = await getEmail();
+    }
 
     DocumentSnapshot userInfo = await FirebaseInteractions.getDocument("profiles", mail);
-    List<DocumentSnapshot> posts = await FirebaseInteractions.getDocumentWithQuery("posts", "author", email);
-    List<DocumentSnapshot> likes = await FirebaseInteractions.getDocumentWithQueryContains("posts", "likes", email);
+    List<DocumentSnapshot> posts = await FirebaseInteractions.getDocumentWithQuery("posts", "author", mail);
+    List<DocumentSnapshot> likes = await FirebaseInteractions.getDocumentWithQueryContains("posts", "likes", mail);
     Map<String, dynamic> config = jsonDecode(await rootBundle.loadString('assets/config.json'));
     setState(() {
       _emailController.text = userInfo.data()["mail"];
